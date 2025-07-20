@@ -1,5 +1,6 @@
 
-// Class To create a node .... 
+
+
 #include<iostream>
 #include<vector>
 using namespace std ; 
@@ -29,9 +30,7 @@ Node* buildTree(vector<int>& preorder_seq){
     root->rightNode = buildTree(preorder_seq) ; 
 
     return root; 
-
-
-}
+} // TC = O(n)
 
 
 int height(Node* root){
@@ -43,7 +42,7 @@ int height(Node* root){
     int rightHeight = height(root->rightNode) ; 
 
     return max(leftHeight , rightHeight) + 1 ; 
-}
+} // TC = O(n)
 
 
 
