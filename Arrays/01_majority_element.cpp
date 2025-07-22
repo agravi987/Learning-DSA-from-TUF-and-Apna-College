@@ -24,6 +24,8 @@ public:
         return -1;  // ❌ No majority element (shouldn’t happen as per problem constraints)
     }
 
+
+
     // 🟡 2️⃣ Sorting Approach - O(n log n) (Faster ⚡)
     int majorityElementSorting(vector<int>& nums) {
         sort(nums.begin(), nums.end()); // 🔀 Sorting the array
@@ -37,7 +39,8 @@ public:
         // 🗳️ Voting phase
         for(int num : nums){
             if(freq == 0) ans = num;  // Pick new candidate
-            freq += (num == ans) ? 1 : -1;  // ✅ Vote for candidate or against
+            if(ans == num) freq++ ; 
+            else freq-- ;   // ✅ Vote for candidate or against
         }
         return ans; // 🎯 Majority element
     }
