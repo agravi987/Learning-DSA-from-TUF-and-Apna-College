@@ -2,18 +2,22 @@
 #include <string>
 using namespace std;
 
-class Solution {
+//////////////////////////////////////////////////////
+// ✅ Solution 1: Expand Around Center with Substrings
+// Time Complexity: O(n²)
+// Space Complexity: O(1)
+// Reason: For each character, we expand outward in both directions.
+//         Substring extraction is constant-time due to internal optimizations.
+//////////////////////////////////////////////////////
+class Solution1 {
 public:
-    // Function to find the longest palindromic substring in a given string
     string longestPalindrome(string s) {
-        // Edge case: if the string is empty or has only one character, it's already a palindrome
         if (s.length() <= 1) {
-            return s;
+            return s; // Edge case: empty or single-character string
         }
 
         string lps = ""; // Stores the longest palindromic substring found
 
-        // Iterate through each character in the string
         for (int i = 0; i < s.size(); i++) {
             // -------- Check for odd-length palindromes --------
             int low = i, high = i; // Center at i
@@ -21,7 +25,6 @@ public:
                 low--;
                 high++;
             }
-            // Extract the palindrome substring
             string palindrome = s.substr(low + 1, high - low - 1);
             if (palindrome.length() > lps.length()) {
                 lps = palindrome;
@@ -34,7 +37,6 @@ public:
                 low--;
                 high++;
             }
-            // Extract the palindrome substring
             palindrome = s.substr(low + 1, high - low - 1);
             if (palindrome.length() > lps.length()) {
                 lps = palindrome;
@@ -45,20 +47,59 @@ public:
     }
 };
 
-// -------- Main function for testing --------
+//////////////////////////////////////////////////////
+// ✅ Solution 2: Expand Around Center with Length Tracking
+// Time Complexity: O(n²)
+// Space Complexity: O(1)
+// Reason: Same expansion logic, but avoids substring comparisons.
+//         Only tracks start and end indices for final extraction.
+//////////////////////////////////////////////////////
+class Solution2 {
+public:
+    // Helper function to expand around center and return length of palindrome
+    int expandFromCenter(string s, int i, int j) {
+        while (i >= 0 && j < s.size() && s[i] == s[j]) {
+            i--;
+            j++;
+        }
+        return j - i - 1; // Final length of palindrome
+    }
+
+    string longestPalindrome(string s) {
+        int start = 0, end = 0; // Track start and end indices of longest palindrome
+
+        for (int i = 0; i < s.size(); i++) {
+            int len1 = expandFromCenter(s, i, i + 1); // Even-length palindrome
+            int len2 = expandFromCenter(s, i, i);     // Odd-length palindrome
+            int len = max(len1, len2);                // Max of both
+
+            if (end - start < len) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
+            }
+        }
+
+        return s.substr(start, end - start + 1);
+    }
+};
+
+//////////////////////////////////////////////////////
+// 🔍 Main Function for Testing Both Solutions
+//////////////////////////////////////////////////////
 int main() {
-    Solution sol;
+    Solution1 sol1;
+    Solution2 sol2;
 
     // Sample test cases
-    string input1 = "babad";
-    string input2 = "cbbd";
-    string input3 = "a";
-    string input4 = "forgeeksskeegfor";
+    string inputs[] = {"babad", "cbbd", "a", "forgeeksskeegfor"};
 
-    cout << "Input: " << input1 << " → Longest Palindrome: " << sol.longestPalindrome(input1) << endl;
-    cout << "Input: " << input2 << " → Longest Palindrome: " << sol.longestPalindrome(input2) << endl;
-    cout << "Input: " << input3 << " → Longest Palindrome: " << sol.longestPalindrome(input3) << endl;
-    cout << "Input: " << input4 << " → Longest Palindrome: " << sol.longestPalindrome(input4) << endl;
+    cout << "=== Longest Palindromic Substring ===\n\n";
+    for (string input : inputs) {
+        cout << "Input: " << input << endl;
+        cout << "→ Solution 1: " << sol1.longestPalindrome(input) << endl;
+        cout << "→ Solution 2: " << sol2.longestPalindrome(input) << endl;
+        cout << "-------------------------------------\n";
+    }
 
     return 0;
 }
