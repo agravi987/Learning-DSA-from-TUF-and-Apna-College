@@ -1,12 +1,10 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-// Definition for singly-linked list node
+/* Definition for singly-linked list node */
 struct ListNode {
     int val;
     ListNode* next;
-
-    // Constructors for convenience
     ListNode() : val(0), next(nullptr) {}
     ListNode(int x) : val(x), next(nullptr) {}
     ListNode(int x, ListNode* next) : val(x), next(next) {}
@@ -14,75 +12,72 @@ struct ListNode {
 
 class Solution {
 public:
-    // Function to merge two sorted linked lists
+    // Iterative merge using dummy node
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
-        // Creating a dummy node to simplify edge cases
-        ListNode* dummyHead = new ListNode(-1);
-        ListNode* temp = dummyHead;  // Temp pointer to build the merged list
+        ListNode* dummy = new ListNode(-1); // dummy head
+        ListNode* tail = dummy;             // tail builds merged list
 
-        ListNode* l1 = list1;
-        ListNode* l2 = list2;
-
-        // Traverse both lists and pick smaller values
-        while (l1 != nullptr && l2 != nullptr) {
-            if (l1->val < l2->val) {
-                temp->next = l1;
-                l1 = l1->next;
+        while (list1 && list2) {
+            if (list1->val < list2->val) {
+                tail->next = list1;
+                list1 = list1->next;
             } else {
-                temp->next = l2;
-                l2 = l2->next;
+                tail->next = list2;
+                list2 = list2->next;
             }
-            temp = temp->next;
+            tail = tail->next;
         }
+        // Attach leftover nodes
+        tail->next = list1 ? list1 : list2;
 
-        // Attach remaining nodes if any
-        if (l1 != nullptr) temp->next = l1;
-        if (l2 != nullptr) temp->next = l2;
-
-        // Return head of merged list
-        return dummyHead->next;
+        return dummy->next; // real head
     }
 };
 
-// Helper function to create linked list from array
-ListNode* createList(int arr[], int n) {
-    if (n == 0) return nullptr;
+// ---------------- MAIN (demo) ----------------
+ListNode* createList(vector<int> arr) {
+    if (arr.empty()) return nullptr;
     ListNode* head = new ListNode(arr[0]);
-    ListNode* current = head;
-    for (int i = 1; i < n; i++) {
-        current->next = new ListNode(arr[i]);
-        current = current->next;
+    ListNode* curr = head;
+    for (int i = 1; i < arr.size(); i++) {
+        curr->next = new ListNode(arr[i]);
+        curr = curr->next;
     }
     return head;
 }
 
-// Helper function to print linked list
 void printList(ListNode* head) {
-    while (head != nullptr) {
-        cout << head->val << " -> ";
+    while (head) {
+        cout << head->val << " ";
         head = head->next;
     }
-    cout << "nullptr" << endl;
+    cout << "nullptr\n";
 }
 
 int main() {
-    // Input arrays for two sorted lists
-    int arr1[] = {1, 3, 5};
-    int arr2[] = {2, 4, 6};
+    ListNode* list1 = createList({1,3,5});
+    ListNode* list2 = createList({2,4,6});
 
-    // Creating linked lists from arrays
-    ListNode* list1 = createList(arr1, 3);
-    ListNode* list2 = createList(arr2, 3);
+    Solution sol;
+    ListNode* merged = sol.mergeTwoLists(list1, list2);
 
-    // Creating object of Solution class
-    Solution solution;
-
-    // Merging the two sorted lists
-    ListNode* mergedList = solution.mergeTwoLists(list1, list2);
-
-    // Printing the merged list
-    cout << "Merged Linked List: ";
-    printList(mergedList);
-
+    cout << "Merged List: ";
+    printList(merged);
     return 0;
 }
+
+/*
+⚡ Quick Notes:
+- Dummy node trick → simplifies edge cases
+- Compare nodes → attach smaller → move forward
+- After loop, attach leftover list
+- Finally return dummy->next (real head)
+
+Example:
+ list1 = 1->3->5
+ list2 = 2->4->6
+ → merged = 1->2->3->4->5->6
+
+✅ TC: O(n+m)   (n & m = lengths of lists)
+✅ SC: O(1)     (just pointers, no recursion stack)
+*/
