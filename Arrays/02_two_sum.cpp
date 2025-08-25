@@ -1,60 +1,102 @@
-// LeetCode - Problem 1: Two Sum
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
 
-// Brute Force Solution
-// Time Complexity: O(n^2) - For each number, iterate over the rest to find the complement.
-// Space Complexity: O(1)
-class Solution {
-    public:
-        vector<int> twoSum(vector<int>& nums, int target) {
-            int n = nums.size();
-            for (int i = 0; i < n; i++) {
-                for (int j = i + 1; j < n; j++) {
-                    if (nums[i] + nums[j] == target) {
-                        return {i, j};
-                    }
+// 🧪 Utility function to print result
+void printResult(const vector<int>& result) {
+    if (result.empty()) {
+        cout << "No valid pair found.\n";
+    } else {
+        cout << "Indices: [" << result[0] << ", " << result[1] << "]\n";
+    }
+}
+
+// 🚀 Brute Force Approach
+// Time: O(n^2), Space: O(1)
+class BruteForceSolution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (nums[i] + nums[j] == target) {
+                    return {i, j};
                 }
             }
-            return {}; // Return empty if no pair is found
         }
-    };
-    
-    // Better Approach
-    // Use a map (or unordered_map) to store complements.
-    // Time Complexity: O(n) - Traverse the array and use map operations (O(1) average case).
-    // Space Complexity: O(n) - To store the elements in the map.
-    class Solution {
-    public:
-        vector<int> twoSum(vector<int>& nums, int target) {
-            unordered_map<int, int> mp; // Use unordered_map for better performance
-            for (int i = 0; i < nums.size(); i++) {
-                int complement = target - nums[i]; // Complement to look for
-                if (mp.find(complement) != mp.end()) { // Check if the complement exists
-                    return {mp[complement], i}; // Return indices of the numbers
-                }
-                mp[nums[i]] = i; // Store the current number with its index
+        return {}; // No pair found
+    }
+};
+
+// ⚡ Hash Map Approach (Optimal for Unsorted Arrays)
+// Time: O(n), Space: O(n)
+class HashMapSolution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> mp; // value → index
+        for (int i = 0; i < nums.size(); i++) {
+            int complement = target - nums[i];
+            auto it = mp.find(complement);
+            if (it != mp.end()) {
+                return {it->second, i};
             }
-            return {}; // Return empty if no pair is found
+            mp[nums[i]] = i;
         }
-    };
-    
-    // Optimal Approach (Two-Pointer Technique - Only Applicable for Sorted Array)
-    // Time Complexity: O(n) - Traverse the array with two pointers.
-    // Space Complexity: O(1)
-    class Solution {
-    public:
-        vector<int> twoSum(vector<int>& nums, int target) {
-            int left = 0, right = nums.size() - 1;
-            // Assuming the input array is sorted
-            while (left < right) {
-                int sum = nums[left] + nums[right];
-                if (sum == target) {
-                    return {left, right}; // Indices of the two numbers
-                } else if (sum < target) {
-                    left++; // Increment left pointer to increase sum
-                } else {
-                    right--; // Decrement right pointer to decrease sum
-                }
+        return {}; // No pair found
+    }
+};
+
+// 🧭 Two Pointer Approach (Only for Sorted Arrays)
+// Time: O(n), Space: O(1)
+class TwoPointerSolution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int left = 0, right = nums.size() - 1;
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) {
+                return {left, right};
+            } else if (sum < target) {
+                left++;
+            } else {
+                right--;
             }
-            return {}; // Return empty if no pair is found
         }
-    };
+        return {}; // No pair found
+    }
+};
+
+// 🧪 Main Function to Test All Approaches
+int main() {
+    vector<int> nums = {2, 7, 11, 15};
+    int target = 9;
+
+    cout << "🔍 Testing Two Sum Approaches\n";
+
+    // Brute Force
+    {
+        cout << "\nBrute Force:\n";
+        BruteForceSolution brute;
+        printResult(brute.twoSum(nums, target));
+    }
+
+    // Hash Map
+    {
+        cout << "\nHash Map:\n";
+        HashMapSolution hashMap;
+        printResult(hashMap.twoSum(nums, target));
+    }
+
+    // Two Pointer (requires sorted array)
+    {
+        cout << "\nTwo Pointer (Sorted Array):\n";
+        vector<int> sortedNums = nums;
+        sort(sortedNums.begin(), sortedNums.end()); // Ensure sorted
+        TwoPointerSolution twoPointer;
+        printResult(twoPointer.twoSum(sortedNums, target));
+    }
+
+    return 0;
+}
